@@ -18,6 +18,25 @@ class User(db.Document):
         return {"name": self.name,
                 "email": self.email}
 
+class Sensor_data(db.Document):
+    sample_id  = db.StringField()
+    time_at    = db.DateTimeField()
+    station_id = db.StringField()
+    parameter  = db.StringField()
+    time_for   = db.DateTimeField()
+    value      = db.DictField()
+    units      = db.StringField()
+    def to_json(self):
+        return {"sample_is" : self.sample_id,
+                "time_at"   : self.time_at,
+                "station_id": self.station_id,
+                "parameter" : self.parameter,
+                "time_for"  : self.time_for,
+                "value"     : self.value,
+                "units"     : self.units}
+    
+
+
 @app.route('/', methods=['GET'])
 def query_records():
     name = request.args.get('name')
@@ -38,12 +57,16 @@ def create_record():
 @app.route('/', methods=['POST'])
 def update_record():
     record = json.loads(request.data)
-    user = User.objects(name=record['name']).first()
-    if not user:
-        return jsonify({'error': 'data not found'})
-    else:
-        user.update(email=record['email'])
-    return jsonify(user.to_json())
+    print(record)
+    print(type(record[0]))
+    # user = User.objects(name=record['name']).first()
+    # if not user:
+    #     return jsonify({'error': 'data not found'})
+    # else:
+    #     user.update(email=record['email'])
+    # return jsonify(user.to_json())
+    return jsonify({"data received" : "ok"})
+
 
 @app.route('/', methods=['DELETE'])
 def delete_record():
@@ -56,4 +79,5 @@ def delete_record():
     return jsonify(user.to_json())
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)
+
