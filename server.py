@@ -1,4 +1,5 @@
 import json
+import datetime
 from flask import Flask, request, jsonify
 from flask_mongoengine import MongoEngine
 
@@ -56,9 +57,26 @@ def create_record():
 
 @app.route('/', methods=['POST'])
 def update_record():
-    record = json.loads(request.data)
-    print(record)
-    print(type(record[0]))
+    records = json.loads(request.data)
+    #print(records)
+    #print(type(records[0]))
+    for record in records:
+        print(record)
+
+        sample = Sensor_data(sample_id=record[0],
+                             station_id=record[1],
+                             parameter=record[2])
+                             #time_at=record[3])
+                             #time_for=record[4])
+
+        jrk = datetime.datetime.strptime(record[3], "%Y-%m-%dT%H:%M:%S")
+        
+        print(jrk)
+        print(type(jrk))
+        
+        sample.save()
+
+
     # user = User.objects(name=record['name']).first()
     # if not user:
     #     return jsonify({'error': 'data not found'})
