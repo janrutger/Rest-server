@@ -12,12 +12,12 @@ app.config['MONGODB_SETTINGS'] = {
 db = MongoEngine()
 db.init_app(app)
 
-# class User(db.Document):
-#     name = db.StringField()
-#     email = db.StringField()
-#     def to_json(self):
-#         return {"name": self.name,
-#                 "email": self.email}
+class User(db.Document):
+    name = db.StringField()
+    email = db.StringField()
+    def to_json(self):
+        return {"name": self.name,
+                "email": self.email}
 
 class Sensor_data(db.Document):
     sample_id  = db.StringField()
@@ -44,18 +44,26 @@ def query_records():
     
     return jsonify(sampels.to_json())
 
+    # name = request.args.get('name')
+    # user = User.objects(name=name).first()
+    # if not user:
+    #     return jsonify({'error': 'data not found'})
+    # else:
+    #     return jsonify(user.to_json())
 
-# @app.route('/', methods=['PUT'])
-# def create_record():
-#     record = json.loads(request.data)
-#     user = User(name=record['name'],
-#                 email=record['email'])
-#     user.save()
-#     return jsonify(user.to_json())
+@app.route('/', methods=['PUT'])
+def create_record():
+    record = json.loads(request.data)
+    user = User(name=record['name'],
+                email=record['email'])
+    user.save()
+    return jsonify(user.to_json())
 
 @app.route('/', methods=['POST'])
 def update_record():
     records = json.loads(request.data)
+    #print(records)
+    #print(type(records[0]))
     for record in records:
         print(record)
 
@@ -66,20 +74,30 @@ def update_record():
                              time_for=datetime.datetime.strptime(record[4], "%Y-%m-%dT%H:%M:%S"),
                              value =record[5],
                              units=record[6])
+        # print(record[5])
+        # print(type(record[5]))
         
         sample.save()
+
+
+    # user = User.objects(name=record['name']).first()
+    # if not user:
+    #     return jsonify({'error': 'data not found'})
+    # else:
+    #     user.update(email=record['email'])
+    # return jsonify(user.to_json())
     return jsonify({"data received" : "ok"})
 
 
-# @app.route('/', methods=['DELETE'])
-# def delete_record():
-#     record = json.loads(request.data)
-#     user = User.objects(name=record['name']).first()
-#     if not user:
-#         return jsonify({'error': 'data not found'})
-#     else:
-#         user.delete()
-#     return jsonify(user.to_json())
+@app.route('/', methods=['DELETE'])
+def delete_record():
+    record = json.loads(request.data)
+    user = User.objects(name=record['name']).first()
+    if not user:
+        return jsonify({'error': 'data not found'})
+    else:
+        user.delete()
+    return jsonify(user.to_json())
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
