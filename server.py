@@ -28,7 +28,7 @@ class Sensor_data(db.Document):
     value      = db.DictField()
     units      = db.StringField()
     def to_json(self):
-        return {"sample_is" : self.sample_id,
+        return {"sample_id" : self.sample_id,
                 "time_at"   : self.time_at,
                 "station_id": self.station_id,
                 "parameter" : self.parameter,
@@ -40,12 +40,16 @@ class Sensor_data(db.Document):
 
 @app.route('/', methods=['GET'])
 def query_records():
-    name = request.args.get('name')
-    user = User.objects(name=name).first()
-    if not user:
-        return jsonify({'error': 'data not found'})
-    else:
-        return jsonify(user.to_json())
+    sampels = Sensor_data.objects.order_by("-time_for").first()
+    
+    return jsonify(sampels.to_json())
+
+    # name = request.args.get('name')
+    # user = User.objects(name=name).first()
+    # if not user:
+    #     return jsonify({'error': 'data not found'})
+    # else:
+    #     return jsonify(user.to_json())
 
 @app.route('/', methods=['PUT'])
 def create_record():
@@ -63,16 +67,15 @@ def update_record():
     for record in records:
         print(record)
 
-        sample = Sensor_data(sample_id=record[0],
+        sample = Sensor_data(sample_id =record[0],
                              station_id=record[1],
-                             parameter=record[2])
-                             #time_at=record[3])
-                             #time_for=record[4])
-
-        jrk = datetime.datetime.strptime(record[3], "%Y-%m-%dT%H:%M:%S")
-        
-        print(jrk)
-        print(type(jrk))
+                             parameter =record[2],
+                             time_at =datetime.datetime.strptime(record[3], "%Y-%m-%dT%H:%M:%S"),
+                             time_for=datetime.datetime.strptime(record[4], "%Y-%m-%dT%H:%M:%S"),
+                             value =record[5],
+                             units=record[6])
+        # print(record[5])
+        # print(type(record[5]))
         
         sample.save()
 
