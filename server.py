@@ -20,7 +20,7 @@ db.init_app(app)
 #                 "email": self.email}
 
 class Sensor_data(db.Document):
-    sample_id  = db.StringField()
+    sample_id  = db.StringField(primary_key=True)
     time_at    = db.DateTimeField()
     station_id = db.StringField()
     parameter  = db.StringField()
@@ -40,9 +40,15 @@ class Sensor_data(db.Document):
 
 @app.route('/', methods=['GET'])
 def query_records():
-    sampels = Sensor_data.objects.order_by("-time_for").first()
-    
-    return jsonify(sampels.to_json())
+    #sampels = Sensor_data.objects.order_by("-time_for").first()
+    sampels = Sensor_data.objects.order_by("-time_for")[0:1]
+
+    jr = Sensor_data.objects.order_by("-time_for")[0:2]
+    print(len(jr))
+    print(jr.to_json())
+    print(jr[5].to_json())
+
+    return jsonify(sampels[0].to_json())
 
 
 # @app.route('/', methods=['PUT'])
