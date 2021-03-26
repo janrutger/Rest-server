@@ -5,7 +5,7 @@ from flask_mongoengine import MongoEngine
 
 app = Flask(__name__)
 app.config['MONGODB_SETTINGS'] = {
-    'db': 'your_database',
+    'db': 'SampleData',
     'host': 'ubuntu.home',
     'port': 27017
 }
@@ -42,22 +42,29 @@ class Sensor_data(db.Document):
 def query_records():
     #sampels = Sensor_data.objects.order_by("-time_for").first()
     sampels = Sensor_data.objects.order_by("-time_for")[0:10]
+    # # jr = Sensor_data.objects.order_by("-time_for")[0:2]
+    # # print(len(jr))
+    # # print(jr.to_json())
+    # # print(jr[5].to_json())
 
-    # jr = Sensor_data.objects.order_by("-time_for")[0:2]
-    # print(len(jr))
-    # print(jr.to_json())
-    # print(jr[5].to_json())
-
-    print(len(sampels()))
-    print(type(sampels()))
-    print(sampels())
-    val = {}
-    for n in range(0, 10):
-        #print(sampels[n].to_json())
-        val[n] = sampels[n].to_json()
-    #return jsonify(val)
+    # print(len(sampels()))
+    # print(type(sampels()))
+    # print(sampels())
+    # val = {}
+    # for n in range(0, 10):
+    #     #print(sampels[n].to_json())
+    #     val[n] = sampels[n].to_json()
+    # #return jsonify(val)
     return jsonify(sampels().to_json())
 
+@app.route('/plot/<station_id>/<parameter>', methods=['GET'])
+def query_selection(station_id, parameter):
+    selection = Sensor_data.objects(station_id=station_id, parameter=parameter).only("time_for", "value").first
+    if not selection():  
+        result = {"ERROR" : {"STATION" : station_id, "PARAMETER" : parameter}}
+        return jsonify(result)
+    else:
+        return jsonify(selection().to_json())
 
 # @app.route('/', methods=['PUT'])
 # def create_record():
