@@ -45,20 +45,25 @@ def query_records():
 
 @app.route('/plot/<station_id>/<parameter>', methods=['GET'])
 def query_selection(station_id, parameter):
-    selection = Sensor_data.objects(station_id=station_id, parameter=parameter).only("sample_id", "time_for", "value")[0:50]
+    selection = Sensor_data.objects(station_id=station_id, parameter=parameter).only("sample_id", "time_for", "value")[0:500]
     if not selection():  
         result = {"ERROR" : {"STATION" : station_id, "PARAMETER" : parameter}}
         return jsonify(result)
     else:
         xas = []
         yas = []
-        for n in range(50):
+        for n in range(len(selection())):
             xas.append(selection()[n].to_json()["time_for"])
             yas.append(selection()[n].to_json()["value"]["T"])
         
         fig = Figure()
+        fig.set_figwidth(20)
+
         ax = fig.subplots()
-        ax.plot(xas, yas)
+        ax.plot(xas, yas, lw=2)
+        ax.grid()
+    
+        #ax.xticks(rotation=70)
         # Save it to a temporary buffer.
         buf = BytesIO()
         fig.savefig(buf, format="png")
