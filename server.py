@@ -45,7 +45,13 @@ def query_records():
 
 @app.route('/plot/<station_id>/<parameter>', methods=['GET'])
 def query_selection(station_id, parameter):
-    selection = Sensor_data.objects(station_id=station_id, parameter=parameter).only("sample_id", "time_for", "value")[0:500]
+    count = (Sensor_data.objects(station_id=station_id, parameter=parameter).count())
+    print(count)
+    start = count - 100
+    if start < 0:
+        start = 0
+    selection = Sensor_data.objects(station_id=station_id, parameter=parameter).only("sample_id", "time_for", "value")[start:count]
+    
     if not selection():  
         result = {"ERROR" : {"STATION" : station_id, "PARAMETER" : parameter}}
         return jsonify(result)
@@ -55,7 +61,7 @@ def query_selection(station_id, parameter):
         yas1 = []
         yas2 = []
         keys = list(selection()[0].to_json()["value"].keys())
-        print(keys[0])
+
         for n in range(len(selection())):
             xas.append(selection()[n].to_json()["time_for"])
             if len(keys) == 1:
