@@ -43,24 +43,26 @@ def query_records():
     sampels = Sensor_data.objects.order_by("-time_for")[0:10]
     return jsonify(sampels().to_json())
 
-@app.route('/plot/<station_id>/<parameter>', methods=['GET'])
-def query_selection(station_id, parameter):
+@app.route('/plot/<number>/<station_id>/<parameter>', methods=['GET'])
+def query_selection(number, station_id, parameter):
     count = (Sensor_data.objects(station_id=station_id, parameter=parameter).count())
     print(count)
-    start = count - 100
+    start = count - int(number)
     if start < 0:
         start = 0
-    selection = Sensor_data.objects(station_id=station_id, parameter=parameter).only("sample_id", "time_for", "value")[start:count]
+    selection = Sensor_data.objects(station_id=station_id, parameter=parameter).only("sample_id", "parameter", "time_for", "value", "units")[start:count]
     
     if not selection():  
         result = {"ERROR" : {"STATION" : station_id, "PARAMETER" : parameter}}
         return jsonify(result)
     else:
-        xas = []
-        yas = []
+        xas  = []
+        yas  = []
         yas1 = []
         yas2 = []
         keys = list(selection()[0].to_json()["value"].keys())
+        units     = selection()[0].to_json()["units"]
+        parameter = selection()[0].to_json()["parameter"]
 
         for n in range(len(selection())):
             xas.append(selection()[n].to_json()["time_for"])
@@ -75,12 +77,17 @@ def query_selection(station_id, parameter):
         fig.set_figwidth(20)
 
         ax = fig.subplots()
-        ax.plot(xas, yas, lw=2)
+        _label = keys[0] + "/[" + units +"]"
+        ax.plot(xas, yas, lw=2, label=_label)
         if len(keys) > 1:
-            ax.plot(xas, yas1, lw=2)
+            _label = keys[1] + "/[" + units +"]"
+            ax.plot(xas, yas1, lw=2, label=_label)
         if len(keys) > 2:
-            ax.plot(xas, yas2, lw=2)
+            _label = keys[2] + "/[" + units +"]"
+            ax.plot(xas, yas2, lw=2, label=_label)
         ax.grid()
+        ax.legend()
+        ax.set_ylabel(parameter)
         
     
         #ax.xticks(rotation=70)
