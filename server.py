@@ -52,16 +52,30 @@ def query_selection(station_id, parameter):
     else:
         xas = []
         yas = []
+        yas1 = []
+        yas2 = []
+        keys = list(selection()[0].to_json()["value"].keys())
+        print(keys[0])
         for n in range(len(selection())):
             xas.append(selection()[n].to_json()["time_for"])
-            yas.append(selection()[n].to_json()["value"]["T"])
+            if len(keys) == 1:
+                yas.append(selection()[n].to_json()["value"][keys[0]])
+            if len(keys) == 3:
+                yas.append(selection()[n].to_json()["value"][keys[0]])
+                yas1.append(selection()[n].to_json()["value"][keys[1]])
+                yas2.append(selection()[n].to_json()["value"][keys[2]])
         
         fig = Figure()
         fig.set_figwidth(20)
 
         ax = fig.subplots()
         ax.plot(xas, yas, lw=2)
+        if len(keys) > 1:
+            ax.plot(xas, yas1, lw=2)
+        if len(keys) > 2:
+            ax.plot(xas, yas2, lw=2)
         ax.grid()
+        
     
         #ax.xticks(rotation=70)
         # Save it to a temporary buffer.
