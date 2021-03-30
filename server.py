@@ -62,7 +62,6 @@ def query_selection(number, station_id, parameter):
         yas2 = []
         keys = list(selection()[0].to_json()["value"].keys())
         units     = selection()[0].to_json()["units"]
-        parameter = selection()[0].to_json()["parameter"]
 
         for n in range(len(selection())):
             xas.append(selection()[n].to_json()["time_for"])
@@ -77,14 +76,14 @@ def query_selection(number, station_id, parameter):
         fig.set_figwidth(20)
 
         ax = fig.subplots()
-        _label = keys[0] + "/[" + units +"]"
-        ax.plot(xas, yas, lw=2, label=_label)
+        _label = keys[0] + "[" + units +"]"
+        ax.plot(xas, yas, lw=2, color="red", label=_label)
         if len(keys) > 1:
-            _label = keys[1] + "/[" + units +"]"
-            ax.plot(xas, yas1, lw=2, label=_label)
+            _label = keys[1] + "[" + units +"]"
+            ax.plot(xas, yas1, lw=2, color="green", label=_label)
         if len(keys) > 2:
-            _label = keys[2] + "/[" + units +"]"
-            ax.plot(xas, yas2, lw=2, label=_label)
+            _label = keys[2] + "[" + units +"]"
+            ax.plot(xas, yas2, lw=2, color="blue", label=_label)
         ax.grid()
         ax.legend()
         ax.set_ylabel(parameter)
