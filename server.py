@@ -1,5 +1,6 @@
 import json
-import datetime
+from datetime import datetime
+from datetime import timedelta
 from flask import Flask, request, jsonify
 from flask_mongoengine import MongoEngine
 
@@ -43,14 +44,18 @@ def query_records():
     sampels = Sensor_data.objects.order_by("-time_for")[0:10]
     return jsonify(sampels().to_json())
 
-@app.route('/plot/<number>/<station_id>/<parameter>', methods=['GET'])
-def query_selection(number, station_id, parameter):
-    count = (Sensor_data.objects(station_id=station_id, parameter=parameter).count())
-    print(count)
-    start = count - int(number)
-    if start < 0:
-        start = 0
-    selection = Sensor_data.objects(station_id=station_id, parameter=parameter).only("sample_id", "parameter", "time_for", "value", "units")[start:count]
+@app.route('/plot/<hours>/<station_id>/<parameter>', methods=['GET'])
+def query_selection(hours, station_id, parameter):
+    # count = (Sensor_data.objects(station_id=station_id, parameter=parameter).count())
+    # print(count)
+    # start = count - int(number)
+    # if start < 0:
+    #     start = 0
+    # selection = Sensor_data.objects(station_id=station_id, parameter=parameter).only("sample_id", "parameter", "time_for", "value", "units")[start:count]
+
+    startdate = datetime.now() - timedelta(hours=int(hours))
+    selection = Sensor_data.objects(station_id=station_id, parameter=parameter, time_for__gte=startdate)
+    print(len(selection))
     
     if not selection():  
         result = {"ERROR" : {"STATION" : station_id, "PARAMETER" : parameter}}
@@ -77,13 +82,13 @@ def query_selection(number, station_id, parameter):
 
         ax = fig.subplots()
         _label = keys[0] + "[" + units +"]"
-        ax.plot(xas, yas, lw=2, color="red", label=_label)
+        ax.plot(xas, yas, lw=1, color="red", marker="d", label=_label)
         if len(keys) > 1:
             _label = keys[1] + "[" + units +"]"
-            ax.plot(xas, yas1, lw=2, color="green", label=_label)
+            ax.plot(xas, yas1, lw=1, color="green", marker="^", label=_label)
         if len(keys) > 2:
             _label = keys[2] + "[" + units +"]"
-            ax.plot(xas, yas2, lw=2, color="blue", label=_label)
+            ax.plot(xas, yas2, lw=1, color="blue",marker="v",  label=_label)
         ax.grid()
         ax.legend()
         ax.set_ylabel(parameter)
@@ -110,8 +115,10 @@ def update_record():
         sample = Sensor_data(sample_id =record[0],
                              station_id=record[1],
                              parameter =record[2],
-                             time_at =datetime.datetime.strptime(record[3], "%Y-%m-%dT%H:%M:%S"),
-                             time_for=datetime.datetime.strptime(record[4], "%Y-%m-%dT%H:%M:%S"),
+                             #time_at =datetime.datetime.strptime(record[3], "%Y-%m-%dT%H:%M:%S"),
+                             #time_for=datetime.datetime.strptime(record[4], "%Y-%m-%dT%H:%M:%S"),
+                             time_at =datetime.strptime(record[3], "%Y-%m-%dT%H:%M:%S"),
+                             time_for=datetime.strptime(record[4], "%Y-%m-%dT%H:%M:%S"),
                              value =record[5],
                              units=record[6])
         
