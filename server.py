@@ -85,32 +85,63 @@ def query_slice(output, endtime, hours, station_id, parameter):
                 yas.append(selection()[n].to_json()["value"][parmKeys[0]])
                 yas1.append(selection()[n].to_json()["value"][parmKeys[1]])
                 yas2.append(selection()[n].to_json()["value"][parmKeys[2]])
+
+                avgValue1 = stats.mean(yas1)
+                avgValue2 = stats.mean(yas2)
+                median1 =stats.median(yas1)
+                median2 =stats.median(yas2)
         
         avgValue = stats.mean(yas)
         median =stats.median(yas)
-
+        
         lastRecord = selection.order_by("-time_for").first()
 
         if output == "json":
-            result = {"ANSWER" : {"LAST" : lastRecord.value[parmKeys[0]],
-                                  "AVERAGE" : avgValue,
-                                  "MEDIAN" : median,
-                                  "X-AS" : xas,
-                                  "Y-AS" : yas}}
+            if len(parmKeys) == 1:
+                result = {"ANSWER" : {"LAST" : lastRecord.value[parmKeys[0]],
+                                      "AVERAGE" : avgValue,
+                                      "MEDIAN" : median,
+                                      "X-AS" : xas,
+                                      parmKeys[0] : yas,
+                                      "UNITS" : parmUnits}}
+            if len(parmKeys) == 3:
+                result = {"ANSWER" : {"LAST" : lastRecord.value[parmKeys[0]],
+                                      "AVERAGE" : avgValue,
+                                      "MEDIAN" : median,
+                                      "X-AS" : xas,
+                                      parmKeys[0] : yas,
+                                      "UNITS" : parmUnits,
+                                      "LAST1" : lastRecord.value[parmKeys[1]],
+                                      "AVERAGE1" : avgValue1,
+                                      "MEDIAN1" : median1,
+                                      parmKeys[1] : yas1,
+                                      "LAST2" : lastRecord.value[parmKeys[2]],
+                                      "AVERAGE2" : avgValue2,
+                                      "MEDIAN2" : median2,
+                                      parmKeys[1] : yas2}}
+
             return(jsonify(result))
+
+
         elif output == "plot":
             fig = Figure()
             fig.set_figwidth(20)
 
             ax = fig.subplots()
             _label = parmKeys[0] + "[" + parmUnits +"]"
-            ax.plot(xas, yas, lw=1, color="red", marker="d", label=_label)
+            ax.plot(xas, yas,                 lw=1, color="red", marker="d", label=_label)
+            ax.plot(xas, [avgValue]*len(xas), lw=1, color="red", linestyle="dotted")
+            ax.plot(xas, [median]*len(xas),   lw=1, color="red", linestyle="dashed")
             if len(parmKeys) > 1:
                 _label = parmKeys[1] + "[" + parmUnits +"]"
-                ax.plot(xas, yas1, lw=1, color="green", marker="^", label=_label)
+                ax.plot(xas, yas1,                 lw=1, color="green", marker="^", label=_label)
+                ax.plot(xas, [avgValue1]*len(xas), lw=1, color="green", linestyle="dotted")
+                ax.plot(xas, [median1]*len(xas),   lw=1, color="green", linestyle="dashed")
             if len(parmKeys) > 2:
                 _label = parmKeys[2] + "[" + parmUnits +"]"
-                ax.plot(xas, yas2, lw=1, color="blue",marker="v",  label=_label)
+                ax.plot(xas, yas2,                 lw=1, color="blue",marker="v",  label=_label)
+                ax.plot(xas, [avgValue2]*len(xas), lw=1, color="blue", linestyle="dotted")
+                ax.plot(xas, [median2]*len(xas),   lw=1, color="blue", linestyle="dashed")
             ax.grid()
             ax.legend()
             ax.set_ylabel(parameter)
