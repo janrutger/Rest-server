@@ -56,7 +56,6 @@ def query_slice(output, endtime, hours, station_id, parameter):
         end_ = datetime.now()
         end_ = end_.strftime("%Y%m%d2359")
         end = datetime.strptime(end_, '%Y%m%d%H%M')
-        print(end)
     elif len(endtime) == 8:
         end = datetime.strptime(endtime, '%Y%m%d')
     elif len(endtime) == 12:
@@ -105,12 +104,20 @@ def query_slice(output, endtime, hours, station_id, parameter):
 
         if output == "json":
             if len(parmKeys) == 1:
-                result = {"ANSWER" : {"LAST" : lastRecord.value[parmKeys[0]],
-                                      "AVERAGE" : avgValue,
-                                      "MEDIAN" : median,
-                                      "X-AS" : xas,
-                                      parmKeys[0] : yas,
-                                      "UNITS" : parmUnits}}
+                result = {"ANSWER" :{"VALUE_LAST" : {parmKeys[0] : lastRecord.value[parmKeys[0]]},
+                                      "VALUE_AVERAGE" : {parmKeys[0] : avgValue},
+                                      "VALUE_MEDIAN"  : {parmKeys[0] : median},
+                                      "UNITS"    : parmUnits,
+                                      "LAST_TIME_FOR" : lastRecord.time_for,
+                                      "LAST_TIME_AT" : lastRecord.time_at,
+                                      "LAST_TIME_QUERY" : end,
+                                      "STATION" : station_id,
+                                      "PARAMETER" : parameter,
+                                      "SLICE_LEN" : len(xas),
+                                      "TIME_LABELS" : xas, 
+                                      "VALUE_LIST" : {parmKeys[0] : yas}
+                                            }}
+                
             if len(parmKeys) == 3:
                 result = {"ANSWER" :{"VALUE_LAST" : {parmKeys[0] : lastRecord.value[parmKeys[0]], 
                                                 parmKeys[1] : lastRecord.value[parmKeys[1]], 
