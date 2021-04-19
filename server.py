@@ -49,7 +49,6 @@ def query_records():
 
 @app.route('/slice/<output>/<endtime>/<hours>/<station_id>/<parameter>', methods=['GET'])
 def query_slice(output, endtime, hours, station_id, parameter):
-    #selection = False
     if endtime == "now":
         end = datetime.now()
     elif endtime == "today":
@@ -61,12 +60,13 @@ def query_slice(output, endtime, hours, station_id, parameter):
     elif len(endtime) == 12:
         end = datetime.strptime(endtime, '%Y%m%d%H%M')
     else:
-        result = {"ERROR" : {"wrong length" : endtime}}
+        result = {"ERROR" : {"wrong date" : endtime}}
         return jsonify(result)
 
     start = end - timedelta(hours=int(hours))
 
     selection = Sensor_data.objects(station_id=station_id, parameter=parameter, time_for__gte=start, time_for__lte=end)
+    
     if not selection():
         result = {"ERROR" : {"OUTPUT"    : output,
                              "STARTTIME" : endtime,
@@ -102,67 +102,76 @@ def query_slice(output, endtime, hours, station_id, parameter):
         
         lastRecord = selection.order_by("-time_for").first()
 
-        if output == "json":
-            if len(parmKeys) == 1:
-                result = {"ANSWER" :{"VALUE_LAST" : {parmKeys[0] : lastRecord.value[parmKeys[0]]},
+        #if output == "json":
+        if len(parmKeys) == 1:
+            result = {"ANSWER" : {"VALUE_LAST" : {parmKeys[0] : lastRecord.value[parmKeys[0]]},
                                       "VALUE_AVERAGE" : {parmKeys[0] : avgValue},
                                       "VALUE_MEDIAN"  : {parmKeys[0] : median},
-                                      "UNITS"    : parmUnits,
+                                      "UNITS"     : parmUnits,
                                       "LAST_TIME_FOR" : lastRecord.time_for,
-                                      "LAST_TIME_AT" : lastRecord.time_at,
+                                      "LAST_TIME_AT"  : lastRecord.time_at,
                                       "LAST_TIME_QUERY" : end,
-                                      "STATION" : station_id,
+                                      "STATION"   : station_id,
                                       "PARAMETER" : parameter,
                                       "SLICE_LEN" : len(xas),
                                       "TIME_LABELS" : xas, 
-                                      "VALUE_LIST" : {parmKeys[0] : yas}
+                                      "VALUE_LIST"  : {parmKeys[0] : yas}
                                             }}
                 
-            if len(parmKeys) == 3:
-                result = {"ANSWER" :{"VALUE_LAST" : {parmKeys[0] : lastRecord.value[parmKeys[0]], 
+        if len(parmKeys) == 3:
+            result = {"ANSWER" : {"VALUE_LAST" : {parmKeys[0] : lastRecord.value[parmKeys[0]], 
                                                 parmKeys[1] : lastRecord.value[parmKeys[1]], 
                                                 parmKeys[2] : lastRecord.value[parmKeys[2]] },
                                       "VALUE_AVERAGE" : {parmKeys[0] : avgValue, 
-                                                   parmKeys[1] : avgValue1, 
-                                                   parmKeys[2] : avgValue2 },
+                                                parmKeys[1] : avgValue1, 
+                                                parmKeys[2] : avgValue2 },
                                       "VALUE_MEDIAN"  : {parmKeys[0] : median, 
                                                    parmKeys[1] : median1, 
                                                    parmKeys[2] : median2 },
-                                      "UNITS"    : parmUnits,
+                                      "UNITS"     : parmUnits,
                                       "LAST_TIME_FOR" : lastRecord.time_for,
-                                      "LAST_TIME_AT" : lastRecord.time_at,
-                                      "STATION" : station_id,
+                                      "LAST_TIME_AT"  : lastRecord.time_at,
+                                      "STATION"   : station_id,
                                       "PARAMETER" : parameter,
                                       "SLICE_LEN" : len(xas),
                                       "TIME_LABELS" : xas, 
-                                      "VALUE_LIST" : {parmKeys[0] : yas, 
-                                                      parmKeys[1] : yas1, 
-                                                      parmKeys[2] : yas2 }
+                                      "VALUE_LIST"  : {parmKeys[0] : yas, 
+                                                    parmKeys[1] : yas1, 
+                                                    parmKeys[2] : yas2 }
                                             }}
 
-
+        if output == "json":
             return(jsonify(result))
 
 
         elif output == "plot":
             fig = Figure()
             fig.set_figwidth(20)
-
             ax = fig.subplots()
-            _label = parmKeys[0] + "[" + parmUnits +"]"
-            ax.plot(xas, yas,                 lw=1, color="red", marker="d", label=_label)
-            ax.plot(xas, [avgValue]*len(xas), lw=1, color="red", linestyle="dotted")
-            ax.plot(xas, [median]*len(xas),   lw=1, color="red", linestyle="dashed")
-            if len(parmKeys) > 1:
-                _label = parmKeys[1] + "[" + parmUnits +"]"
-                ax.plot(xas, yas1,                 lw=1, color="green", marker="^", label=_label)
-                ax.plot(xas, [avgValue1]*len(xas), lw=1, color="green", linestyle="dotted")
-                ax.plot(xas, [median1]*len(xas),   lw=1, color="green", linestyle="dashed")
-            if len(parmKeys) > 2:
-                _label = parmKeys[2] + "[" + parmUnits +"]"
-                ax.plot(xas, yas2,                 lw=1, color="blue",marker="v",  label=_label)
-                ax.plot(xas, [avgValue2]*len(xas), lw=1, color="blue", linestyle="dotted")
-                ax.plot(xas, [median2]*len(xas),   lw=1, color="blue", linestyle="dashed")
+
+            parm_Keys = list(result["ANSWER"]["VALUE_LAST"].keys())
+
+            if len(result["ANSWER"]["VALUE_LAST"]) == 1:
+                _Label = parm_Keys[0] + "[" + result["ANSWER"]["UNITS"] + "]"
+                ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[0]],                                             lw=1, color="red", marker="d", label=_Label )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[0]]]*len(result["ANSWER"]["TIME_LABELS"]),    lw=1, color="red", linestyle="dotted" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[0]]]*len(result["ANSWER"]["TIME_LABELS"]),     lw=1, color="red", linestyle="dashed" )
+            if len(result["ANSWER"]["VALUE_LAST"]) == 3:
+                _Label = parm_Keys[0] + "[" + result["ANSWER"]["UNITS"] + "]"
+                ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[0]],                                             lw=1, color="red", marker="d", label=_Label )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[0]]]*len(result["ANSWER"]["TIME_LABELS"]),    lw=1, color="red", linestyle="dotted" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[0]]]*len(result["ANSWER"]["TIME_LABELS"]),     lw=1, color="red", linestyle="dashed" )
+
+                _Label = parm_Keys[1] + "[" + result["ANSWER"]["UNITS"] + "]"
+                ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[1]],                                             lw=1, color="green", marker="d", label=_Label )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[1]]]*len(result["ANSWER"]["TIME_LABELS"]),    lw=1, color="green", linestyle="dotted" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[1]]]*len(result["ANSWER"]["TIME_LABELS"]),     lw=1, color="green", linestyle="dashed" )
+
+                _Label = parm_Keys[2] + "[" + result["ANSWER"]["UNITS"] + "]"
+                ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[2]],                                             lw=1, color="blue", marker="d", label=_Label )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[2]]]*len(result["ANSWER"]["TIME_LABELS"]),    lw=1, color="blue", linestyle="dotted" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[2]]]*len(result["ANSWER"]["TIME_LABELS"]),     lw=1, color="blue", linestyle="dashed" )
+            
             ax.grid()
             ax.legend()
             ax.set_ylabel(parameter)
