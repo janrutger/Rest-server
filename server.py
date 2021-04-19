@@ -50,7 +50,14 @@ def query_records():
 @app.route('/slice/<output>/<endtime>/<hours>/<station_id>/<parameter>', methods=['GET'])
 def query_slice(output, endtime, hours, station_id, parameter):
     #selection = False
-    if len(endtime) == 8:
+    if endtime == "now":
+        end = datetime.now()
+    elif endtime == "today":
+        end_ = datetime.now()
+        end_ = end_.strftime("%Y%m%d2359")
+        end = datetime.strptime(end_, '%Y%m%d%H%M')
+        print(end)
+    elif len(endtime) == 8:
         end = datetime.strptime(endtime, '%Y%m%d')
     elif len(endtime) == 12:
         end = datetime.strptime(endtime, '%Y%m%d%H%M')
@@ -105,20 +112,27 @@ def query_slice(output, endtime, hours, station_id, parameter):
                                       parmKeys[0] : yas,
                                       "UNITS" : parmUnits}}
             if len(parmKeys) == 3:
-                result = {"ANSWER" : {"LAST" : lastRecord.value[parmKeys[0]],
-                                      "AVERAGE" : avgValue,
-                                      "MEDIAN" : median,
-                                      "X-AS" : xas,
-                                      parmKeys[0] : yas,
-                                      "UNITS" : parmUnits,
-                                      "LAST1" : lastRecord.value[parmKeys[1]],
-                                      "AVERAGE1" : avgValue1,
-                                      "MEDIAN1" : median1,
-                                      parmKeys[1] : yas1,
-                                      "LAST2" : lastRecord.value[parmKeys[2]],
-                                      "AVERAGE2" : avgValue2,
-                                      "MEDIAN2" : median2,
-                                      parmKeys[1] : yas2}}
+                result = {"ANSWER" :{"VALUE_LAST" : {parmKeys[0] : lastRecord.value[parmKeys[0]], 
+                                                parmKeys[1] : lastRecord.value[parmKeys[1]], 
+                                                parmKeys[2] : lastRecord.value[parmKeys[2]] },
+                                      "VALUE_AVERAGE" : {parmKeys[0] : avgValue, 
+                                                   parmKeys[1] : avgValue1, 
+                                                   parmKeys[2] : avgValue2 },
+                                      "VALUE_MEDIAN"  : {parmKeys[0] : median, 
+                                                   parmKeys[1] : median1, 
+                                                   parmKeys[2] : median2 },
+                                      "UNITS"    : parmUnits,
+                                      "LAST_TIME_FOR" : lastRecord.time_for,
+                                      "LAST_TIME_AT" : lastRecord.time_at,
+                                      "STATION" : station_id,
+                                      "PARAMETER" : parameter,
+                                      "SLICE_LEN" : len(xas),
+                                      "TIME_LABELS" : xas, 
+                                      "VALUE_LIST" : {parmKeys[0] : yas, 
+                                                      parmKeys[1] : yas1, 
+                                                      parmKeys[2] : yas2 }
+                                            }}
+
 
             return(jsonify(result))
 
