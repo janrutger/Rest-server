@@ -149,24 +149,24 @@ def query_slice(output, endtime, hours, station_id, parameter):
 
             if len(result["ANSWER"]["VALUE_LAST"]) == 1:
                 _Label = parm_Keys[0] + "[" + result["ANSWER"]["UNITS"] + "]"
-                ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[0]],                                             lw=1, color="red", marker="d", label=_Label )
-                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[0]]]*len(result["ANSWER"]["TIME_LABELS"]),    lw=1, color="red", linestyle="dotted" )
-                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[0]]]*len(result["ANSWER"]["TIME_LABELS"]),     lw=1, color="red", linestyle="dashed" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[0]],                                      lw=1, color="red", marker="d", label=_Label )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],    lw=1, color="red", linestyle="dotted" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],     lw=1, color="red", linestyle="dashed" )
             if len(result["ANSWER"]["VALUE_LAST"]) == 3:
                 _Label = parm_Keys[0] + "[" + result["ANSWER"]["UNITS"] + "]"
-                ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[0]],                                             lw=1, color="red", marker="d", label=_Label )
-                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[0]]]*len(result["ANSWER"]["TIME_LABELS"]),    lw=1, color="red", linestyle="dotted" )
-                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[0]]]*len(result["ANSWER"]["TIME_LABELS"]),     lw=1, color="red", linestyle="dashed" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[0]],                                      lw=1, color="red", marker="d", label=_Label )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],    lw=1, color="red", linestyle="dotted" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],     lw=1, color="red", linestyle="dashed" )
 
                 _Label = parm_Keys[1] + "[" + result["ANSWER"]["UNITS"] + "]"
-                ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[1]],                                             lw=1, color="green", marker="d", label=_Label )
-                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[1]]]*len(result["ANSWER"]["TIME_LABELS"]),    lw=1, color="green", linestyle="dotted" )
-                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[1]]]*len(result["ANSWER"]["TIME_LABELS"]),     lw=1, color="green", linestyle="dashed" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[1]],                                      lw=1, color="green", marker="d", label=_Label )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[1]]]*result["ANSWER"]["SLICE_LEN"],    lw=1, color="green", linestyle="dotted" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[1]]]*result["ANSWER"]["SLICE_LEN"],     lw=1, color="green", linestyle="dashed" )
 
                 _Label = parm_Keys[2] + "[" + result["ANSWER"]["UNITS"] + "]"
-                ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[2]],                                             lw=1, color="blue", marker="d", label=_Label )
-                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[2]]]*len(result["ANSWER"]["TIME_LABELS"]),    lw=1, color="blue", linestyle="dotted" )
-                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[2]]]*len(result["ANSWER"]["TIME_LABELS"]),     lw=1, color="blue", linestyle="dashed" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[2]],                                      lw=1, color="blue", marker="d", label=_Label )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[2]]]*result["ANSWER"]["SLICE_LEN"],    lw=1, color="blue", linestyle="dotted" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[2]]]*result["ANSWER"]["SLICE_LEN"],     lw=1, color="blue", linestyle="dashed" )
             
             ax.grid()
             ax.legend()
