@@ -82,8 +82,25 @@ def query_slice(output, endtime, hours, station_id, parameter):
         yas = []
         yas1= []
         yas2= []
+        lastNvalues = []
+        lastNvalues1= []
+        lastNvalues2= []
         parmKeys = list(selection()[0].to_json()["value"].keys())
         parmUnits     = selection()[0].to_json()["units"]
+
+        #lastRecord = selection.order_by("-time_for").first()
+
+        reverse_selection = selection.order_by("-time_for")
+        lastRecord  = reverse_selection[0]
+        if len(parmKeys) == 1:
+            for n in range(1, 5+1):
+                lastNvalues.append(reverse_selection[n].to_json()["value"][parmKeys[0]])
+        if len(parmKeys) == 3:
+            for n in range(1, 5+1):
+                lastNvalues.append(reverse_selection[n].to_json()["value"][parmKeys[0]])
+                lastNvalues1.append(reverse_selection[n].to_json()["value"][parmKeys[1]])
+                lastNvalues2.append(reverse_selection[n].to_json()["value"][parmKeys[2]])
+
 
         for n in range(len(selection())):
             xas.append((selection()[n].to_json()["time_for"]))
@@ -94,12 +111,12 @@ def query_slice(output, endtime, hours, station_id, parameter):
                 yas1.append(selection()[n].to_json()["value"][parmKeys[1]])
                 yas2.append(selection()[n].to_json()["value"][parmKeys[2]])
         
-        lastRecord = selection.order_by("-time_for").first()
-
+        
         print("Make JSON")
         if len(parmKeys) == 1:
             result = {"ANSWER" : {"VALUE_LAST" : {parmKeys[0] : lastRecord.value[parmKeys[0]]},
                                       "VALUE_AVERAGE" : {parmKeys[0] : stats.mean(yas)},
+                                      "VALUE_N_AVERAGE" : {parmKeys[0] : stats.mean(lastNvalues)},
                                       "VALUE_MEDIAN"  : {parmKeys[0] : stats.median(yas)},
                                       "UNITS"     : parmUnits,
                                       "LAST_TIME_FOR" : lastRecord.time_for,
@@ -119,6 +136,9 @@ def query_slice(output, endtime, hours, station_id, parameter):
                                       "VALUE_AVERAGE" : {parmKeys[0] : stats.mean(yas), 
                                                 parmKeys[1] : stats.mean(yas1), 
                                                 parmKeys[2] : stats.mean(yas2) },
+                                      "VALUE_N_AVERAGE" : {parmKeys[0] : stats.mean(lastNvalues), 
+                                                parmKeys[1] : stats.mean(lastNvalues1), 
+                                                parmKeys[2] : stats.mean(lastNvalues2) },                                        
                                       "VALUE_MEDIAN"  : {parmKeys[0] : stats.median(yas), 
                                                    parmKeys[1] : stats.median(yas1), 
                                                    parmKeys[2] : stats.median(yas2) },
@@ -152,21 +172,25 @@ def query_slice(output, endtime, hours, station_id, parameter):
                 ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[0]],                                      lw=1, color="red", marker="d", label=_Label )
                 ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],    lw=1, color="red", linestyle="dotted" )
                 ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],     lw=1, color="red", linestyle="dashed" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_N_AVERAGE"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],  lw=1, color="red", linestyle="dashdot" )
             if len(result["ANSWER"]["VALUE_LAST"]) == 3:
                 _Label = parm_Keys[0] + "[" + result["ANSWER"]["UNITS"] + "]"
                 ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[0]],                                      lw=1, color="red", marker="d", label=_Label )
                 ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],    lw=1, color="red", linestyle="dotted" )
                 ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],     lw=1, color="red", linestyle="dashed" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_N_AVERAGE"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],  lw=1, color="red", linestyle="dashdot" )
 
                 _Label = parm_Keys[1] + "[" + result["ANSWER"]["UNITS"] + "]"
                 ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[1]],                                      lw=1, color="green", marker="d", label=_Label )
                 ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[1]]]*result["ANSWER"]["SLICE_LEN"],    lw=1, color="green", linestyle="dotted" )
                 ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[1]]]*result["ANSWER"]["SLICE_LEN"],     lw=1, color="green", linestyle="dashed" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_N_AVERAGE"][parm_Keys[1]]]*result["ANSWER"]["SLICE_LEN"],  lw=1, color="green", linestyle="dashdot" )
 
                 _Label = parm_Keys[2] + "[" + result["ANSWER"]["UNITS"] + "]"
                 ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[2]],                                      lw=1, color="blue", marker="d", label=_Label )
                 ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[2]]]*result["ANSWER"]["SLICE_LEN"],    lw=1, color="blue", linestyle="dotted" )
                 ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[2]]]*result["ANSWER"]["SLICE_LEN"],     lw=1, color="blue", linestyle="dashed" )
+                ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_N_AVERAGE"][parm_Keys[2]]]*result["ANSWER"]["SLICE_LEN"],  lw=1, color="blue", linestyle="dashdot" )
             
             ax.grid()
             ax.legend()
