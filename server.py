@@ -49,6 +49,7 @@ def query_records():
 
 @app.route('/slice/<output>/<endtime>/<hours>/<station_id>/<parameter>', methods=['GET'])
 def query_slice(output, endtime, hours, station_id, parameter):
+    print("check Time Fields")
     if endtime == "now":
         end = datetime.now()
     elif endtime == "today":
@@ -64,9 +65,9 @@ def query_slice(output, endtime, hours, station_id, parameter):
         return jsonify(result)
 
     start = end - timedelta(hours=int(hours))
-
+    print("Start query")
     selection = Sensor_data.objects(station_id=station_id, parameter=parameter, time_for__gte=start, time_for__lte=end)
-    
+
     if not selection():
         result = {"ERROR" : {"OUTPUT"    : output,
                              "STARTTIME" : endtime,
@@ -76,6 +77,7 @@ def query_slice(output, endtime, hours, station_id, parameter):
         }
         return jsonify(result)
     else:
+        print("Proces result")
         xas = []
         yas = []
         yas1= []
@@ -91,22 +93,14 @@ def query_slice(output, endtime, hours, station_id, parameter):
                 yas.append(selection()[n].to_json()["value"][parmKeys[0]])
                 yas1.append(selection()[n].to_json()["value"][parmKeys[1]])
                 yas2.append(selection()[n].to_json()["value"][parmKeys[2]])
-
-                avgValue1 = stats.mean(yas1)
-                avgValue2 = stats.mean(yas2)
-                median1 =stats.median(yas1)
-                median2 =stats.median(yas2)
-        
-        avgValue = stats.mean(yas)
-        median =stats.median(yas)
         
         lastRecord = selection.order_by("-time_for").first()
 
-        #if output == "json":
+        print("Make JSON")
         if len(parmKeys) == 1:
             result = {"ANSWER" : {"VALUE_LAST" : {parmKeys[0] : lastRecord.value[parmKeys[0]]},
-                                      "VALUE_AVERAGE" : {parmKeys[0] : avgValue},
-                                      "VALUE_MEDIAN"  : {parmKeys[0] : median},
+                                      "VALUE_AVERAGE" : {parmKeys[0] : stats.mean(yas)},
+                                      "VALUE_MEDIAN"  : {parmKeys[0] : stats.median(yas)},
                                       "UNITS"     : parmUnits,
                                       "LAST_TIME_FOR" : lastRecord.time_for,
                                       "LAST_TIME_AT"  : lastRecord.time_at,
@@ -122,12 +116,12 @@ def query_slice(output, endtime, hours, station_id, parameter):
             result = {"ANSWER" : {"VALUE_LAST" : {parmKeys[0] : lastRecord.value[parmKeys[0]], 
                                                 parmKeys[1] : lastRecord.value[parmKeys[1]], 
                                                 parmKeys[2] : lastRecord.value[parmKeys[2]] },
-                                      "VALUE_AVERAGE" : {parmKeys[0] : avgValue, 
-                                                parmKeys[1] : avgValue1, 
-                                                parmKeys[2] : avgValue2 },
-                                      "VALUE_MEDIAN"  : {parmKeys[0] : median, 
-                                                   parmKeys[1] : median1, 
-                                                   parmKeys[2] : median2 },
+                                      "VALUE_AVERAGE" : {parmKeys[0] : stats.mean(yas), 
+                                                parmKeys[1] : stats.mean(yas1), 
+                                                parmKeys[2] : stats.mean(yas2) },
+                                      "VALUE_MEDIAN"  : {parmKeys[0] : stats.median(yas), 
+                                                   parmKeys[1] : stats.median(yas1), 
+                                                   parmKeys[2] : stats.median(yas2) },
                                       "UNITS"     : parmUnits,
                                       "LAST_TIME_FOR" : lastRecord.time_for,
                                       "LAST_TIME_AT"  : lastRecord.time_at,
@@ -141,10 +135,12 @@ def query_slice(output, endtime, hours, station_id, parameter):
                                             }}
 
         if output == "json":
+            print("return JSON")
             return(jsonify(result))
 
 
         elif output == "plot":
+            print("Compose plot")
             fig = Figure()
             fig.set_figwidth(20)
             ax = fig.subplots()
@@ -176,14 +172,14 @@ def query_slice(output, endtime, hours, station_id, parameter):
             ax.legend()
             ax.set_ylabel(parameter)
         
-    
+            print("Render PNG")
             #ax.xticks(rotation=70)
             # Save it to a temporary buffer.
             buf = BytesIO()
             fig.savefig(buf, format="png")
             # Embed the result in the html output.
             data = base64.b64encode(buf.getbuffer()).decode("ascii")
-        
+            print("Send PNG")
             return f"<img src='data:image/png;base64,{data}'/>"
 
 
