@@ -47,8 +47,8 @@ def query_records():
     sampels = Sensor_data.objects.order_by("-time_for")[0:10]
     return jsonify(sampels().to_json())
 
-@app.route('/slice/<output>/<endtime>/<hours>/<station_id>/<parameter>', methods=['GET'])
-def query_slice(output, endtime, hours, station_id, parameter):
+@app.route('/slice/<output>/<endtime>/<hours>/<marker>/<station_id>/<parameter>', methods=['GET'])
+def query_slice(output, endtime, hours, marker, station_id, parameter):
     print("check Time Fields")
     if endtime == "now":
         end = datetime.now()
@@ -92,11 +92,14 @@ def query_slice(output, endtime, hours, station_id, parameter):
 
         reverse_selection = selection.order_by("-time_for")
         lastRecord  = reverse_selection[0]
+
+        if len(reverse_selection) < int(marker):
+            marker = len(reverse_selection)
         if len(parmKeys) == 1:
-            for n in range(0, 5):
+            for n in range(0, int(marker)):
                 lastNvalues.append(reverse_selection[n].to_json()["value"][parmKeys[0]])
         if len(parmKeys) == 3:
-            for n in range(0, 5):
+            for n in range(0, int(marker)):
                 lastNvalues.append(reverse_selection[n].to_json()["value"][parmKeys[0]])
                 lastNvalues1.append(reverse_selection[n].to_json()["value"][parmKeys[1]])
                 lastNvalues2.append(reverse_selection[n].to_json()["value"][parmKeys[2]])
@@ -156,7 +159,12 @@ def query_slice(output, endtime, hours, station_id, parameter):
 
         if output == "json":
             print("return JSON")
-            return(jsonify(result))
+            response = make_response(jsonify(result))
+            response.headers["Content-Type"] = "application/json"
+            print(response.headers)
+            print(response.data)
+            return(response)
+            #return(jsonify(result))
 
 
         elif output == "plot":
