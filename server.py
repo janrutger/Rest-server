@@ -161,6 +161,7 @@ def query_slice(output, endtime, hours, marker, station_id, parameter):
             print("return JSON")
             response = make_response(jsonify(result))
             response.headers["Content-Type"] = "application/json"
+            response.headers["Access-Control-Allow-Origin"] = "*"
             print(response.headers)
             print(response.data)
             return(response)
