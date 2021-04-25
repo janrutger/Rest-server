@@ -106,7 +106,7 @@ def query_slice(output, endtime, hours, marker, station_id, parameter):
 
 
         for n in range(len(selection())):
-            xas.append((selection()[n].to_json()["time_for"]))
+            xas.append((selection()[n].to_json()["time_for"]).strftime("%Y-%m-%dT%H:%M:%S"))
             if len(parmKeys) == 1:
                 yas.append(selection()[n].to_json()["value"][parmKeys[0]])
             if len(parmKeys) == 3:
@@ -122,9 +122,9 @@ def query_slice(output, endtime, hours, marker, station_id, parameter):
                                       "VALUE_N_AVERAGE" : {parmKeys[0] : stats.mean(lastNvalues)},
                                       "VALUE_MEDIAN"  : {parmKeys[0] : stats.median(yas)},
                                       "UNITS"     : parmUnits,
-                                      "LAST_TIME_FOR" : lastRecord.time_for,
-                                      "LAST_TIME_AT"  : lastRecord.time_at,
-                                      "LAST_TIME_QUERY" : end,
+                                      "LAST_TIME_FOR" : lastRecord.time_for.strftime("%Y-%m-%dT%H:%M:%S"),
+                                      "LAST_TIME_AT"  : lastRecord.time_at.strftime("%Y-%m-%dT%H:%M:%S"),
+                                      "LAST_TIME_QUERY" : end.strftime("%Y-%m-%dT%H:%M:%S"),
                                       "STATION"   : station_id,
                                       "PARAMETER" : parameter,
                                       "SLICE_LEN" : len(xas),
@@ -146,8 +146,8 @@ def query_slice(output, endtime, hours, marker, station_id, parameter):
                                                    parmKeys[1] : stats.median(yas1), 
                                                    parmKeys[2] : stats.median(yas2) },
                                       "UNITS"     : parmUnits,
-                                      "LAST_TIME_FOR" : lastRecord.time_for,
-                                      "LAST_TIME_AT"  : lastRecord.time_at,
+                                      "LAST_TIME_FOR" : lastRecord.time_for.strftime("%Y-%m-%dT%H:%M:%S"),
+                                      "LAST_TIME_AT"  : lastRecord.time_at.strftime("%Y-%m-%dT%H:%M:%S"),
                                       "STATION"   : station_id,
                                       "PARAMETER" : parameter,
                                       "SLICE_LEN" : len(xas),
