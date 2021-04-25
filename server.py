@@ -117,8 +117,8 @@ def query_slice(output, endtime, hours, marker, station_id, parameter):
         
         print("Make JSON")
         if len(parmKeys) == 1:
-            result = {"ANSWER" : {"VALUE_LAST" : {parmKeys[0] : lastRecord.value[parmKeys[0]]},
-                                      "VALUE_AVERAGE" : {parmKeys[0] : stats.mean(yas)},
+            result = {"ANSWER" : {"VALUE_LAST" : {parmKeys[0] : round(lastRecord.value[parmKeys[0]], 2)},
+                                      "VALUE_AVERAGE" : {parmKeys[0] : round(stats.mean(yas), 2)},
                                       "VALUE_N_AVERAGE" : {parmKeys[0] : stats.mean(lastNvalues)},
                                       "VALUE_MEDIAN"  : {parmKeys[0] : stats.median(yas)},
                                       "UNITS"     : parmUnits,
