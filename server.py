@@ -186,10 +186,17 @@ def query_slice(output, endtime, hours, marker, station_id, parameter):
                 else:
                     _marker = "d"
 
+                #Convert result[times] stings to date
+                n = 0
+                for times in result["ANSWER"]["TIME_LABELS"]:
+                    xas[n] = datetime.strptime(times, "%Y-%m-%dT%H:%M:%S") 
+                    n = n + 1
+
                 ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[0]],                                      lw=1, color="red", marker=_marker, label=_Label )
                 ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],    lw=1, color="red", linestyle="dotted" )
                 ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],     lw=1, color="red", linestyle="dashed" )
                 ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_N_AVERAGE"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],  lw=1, color="red", linestyle="dashdot" )
+            
             if len(result["ANSWER"]["VALUE_LAST"]) == 3:
                 _Label = parm_Keys[0] + "[" + result["ANSWER"]["UNITS"] + "]"
                 if result["ANSWER"]["VALUE_N_AVERAGE"][parm_Keys[0]] > result["ANSWER"]["VALUE_LAST"][parm_Keys[0]]:
@@ -198,6 +205,13 @@ def query_slice(output, endtime, hours, marker, station_id, parameter):
                     _marker = "^"
                 else:
                     _marker = "d"
+
+                #Convert result[times] stings to date
+                n = 0
+                for times in result["ANSWER"]["TIME_LABELS"]:
+                    xas[n] = datetime.strptime(times, "%Y-%m-%dT%H:%M:%S") 
+                    n = n + 1
+                    
                 ax.plot(result["ANSWER"]["TIME_LABELS"],  result["ANSWER"]["VALUE_LIST"][parm_Keys[0]],                                      lw=1, color="red", marker=_marker, label=_Label )
                 ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_AVERAGE"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],    lw=1, color="red", linestyle="dotted" )
                 ax.plot(result["ANSWER"]["TIME_LABELS"], [result["ANSWER"]["VALUE_MEDIAN"][parm_Keys[0]]]*result["ANSWER"]["SLICE_LEN"],     lw=1, color="red", linestyle="dashed" )

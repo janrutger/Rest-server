@@ -4,7 +4,7 @@ google.charts.load('current', {'packages':['line']});
 
 function refresh(){
     console.log("Func refresh")
-    let url = "http://rest:5000/slice/json/now/36/5/Amsterdam/temperature"
+    let url = "http://rest:5000/slice/json/now/36/5/Amsterdam/Humidity"
     //let url = "ServerResponse.json"
 
     fetch(url)
@@ -79,8 +79,8 @@ function plot(info){
           title: info["PARAMETER"].toUpperCase(),
           subtitle: parm + " " + info["UNITS"]
         },
-        width: 1200,
-        height: 480
+        width: 830,
+        height: 200
       };
 
       var chart = new google.charts.Line(document.getElementById('PlotGraph'));

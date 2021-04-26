@@ -1,5 +1,5 @@
 body {
-    width: 1240px;
+    width: 1280px;
     margin: 0px;
     margin-left: 5px;
     margin-top: 5px;
@@ -24,12 +24,15 @@ body {
 #parameter {
     border:1px solid black;
     background-color: rgb(175, 171, 171); 
-    width: 400px;
+    
     
 }
 
 #numbers {
     padding: 2px;
+    border: 1px solid black;
+    width: 400px;
+    float: left;
     
 }
 
@@ -53,7 +56,7 @@ body {
 
 #graph {
     border:1px solid black;
-    
-    
+    width: 840px; 
+    float: right;  
 }
 
