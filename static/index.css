@@ -1,0 +1,59 @@
+body {
+    width: 1240px;
+    margin: 0px;
+    margin-left: 5px;
+    margin-top: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    
+}
+
+#application {
+    border:1px solid black;
+    background-color: rgb(202, 199, 199); 
+    padding: 4px;
+    text-align: center;
+}
+
+#station {
+    border:1px solid black;
+    background-color: rgb(175, 171, 171);
+    padding: 4px;
+    text-align: left;
+}
+
+#parameter {
+    border:1px solid black;
+    background-color: rgb(175, 171, 171); 
+    width: 400px;
+    
+}
+
+#numbers {
+    padding: 2px;
+    
+}
+
+#parmName {
+    font-size: x-large;
+    text-decoration: underline;
+}
+
+#parmValue {
+    font-family: 'Orbitron';
+    font-size: x-large;
+    font-weight: bolder;
+}
+
+#parmMean {
+    font-family: 'Orbitron';
+    font-size: large;
+    font-weight: bold;
+
+}
+
+#graph {
+    border:1px solid black;
+    
+    
+}
+

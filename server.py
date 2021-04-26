@@ -44,8 +44,9 @@ class Sensor_data(db.Document):
 @app.route('/', methods=['GET'])
 def query_records():
     #sampels = Sensor_data.objects.order_by("-time_for").first()
-    sampels = Sensor_data.objects.order_by("-time_for")[0:10]
-    return jsonify(sampels().to_json())
+    #sampels = Sensor_data.objects.order_by("-time_for")[0:10]
+    #return jsonify(sampels().to_json())
+    return app.send_static_file('index.html')
 
 @app.route('/slice/<output>/<endtime>/<hours>/<marker>/<station_id>/<parameter>', methods=['GET'])
 def query_slice(output, endtime, hours, marker, station_id, parameter):
