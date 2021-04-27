@@ -6,10 +6,10 @@ function refresh(parm_id){
     console.log("Func refresh")
     console.log(parm_id)
     if (parm_id == 0){
-        url = "http://rest:5000/slice/json/today/36/5/Amsterdam/Humidity"
-    } else if (parm_id == 1){
         url = "http://rest:5000/slice/json/today/36/5/Amsterdam/temperature"
-    } else {
+    } else if (parm_id == 1){
+        url = "http://rest:5000/slice/json/today/36/5/Amsterdam/Humidity"
+    } else if (parm_id == 2){
         url = "http://rest:5000/slice/json/today/36/5/Amsterdam/pressure"
     }
 
@@ -53,6 +53,12 @@ function update(info, parm_id){
         document.getElementById("parmValue1").innerHTML=_value
         document.getElementById("parmMean1").innerHTML=_parmMean
         document.getElementById("parmMarker1").innerHTML=_marker
+    } else if (parm_id == 2){
+        document.getElementById("stationName").innerHTML=_stationName
+        document.getElementById("parmName2").innerHTML=_parmName
+        document.getElementById("parmValue2").innerHTML=_value
+        document.getElementById("parmMean2").innerHTML=_parmMean
+        document.getElementById("parmMarker2").innerHTML=_marker
     }
     
     google.charts.setOnLoadCallback(plot(info, parm_id));
@@ -60,7 +66,7 @@ function update(info, parm_id){
 
 function plot(info, parm_id){
     console.log("Func plot")
-    console.log(info)
+    console.log(parm_id)
 
     //JR Code
     
@@ -104,7 +110,10 @@ function plot(info, parm_id){
         var chart = new google.charts.Line(document.getElementById('PlotGraph'));
     } else if (parm_id ==1){
         var chart = new google.charts.Line(document.getElementById('PlotGraph1'));
+    } else if (parm_id ==2){
+        var chart = new google.charts.Line(document.getElementById('PlotGraph2'));
     }
+
     chart.draw(data, google.charts.Line.convertOptions(options));
 
 

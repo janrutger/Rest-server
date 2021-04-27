@@ -24,16 +24,13 @@ body {
 .parameter {
     border:1px solid black;
     background-color: rgb(175, 171, 171); 
-    
-    
 }
 
 .numbers {
     padding: 2px;
     border: 1px solid black;
     width: 400px;
-    float: left;
-    
+    float: left;   
 }
 
 .graph {
@@ -76,3 +73,19 @@ body {
     font-weight: bold;
 }
 
+#parmName2 {
+    font-size: x-large;
+    text-decoration: underline;
+}
+
+#parmValue2 {
+    font-family: 'Orbitron';
+    font-size: x-large;
+    font-weight: bolder;
+}
+
+#parmMean2 {
+    font-family: 'Orbitron';
+    font-size: large;
+    font-weight: bold;
+}
