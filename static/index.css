@@ -7,33 +7,39 @@ body {
     
 }
 
-#application {
+.application {
     border:1px solid black;
     background-color: rgb(202, 199, 199); 
     padding: 4px;
     text-align: center;
 }
 
-#station {
+.station {
     border:1px solid black;
     background-color: rgb(175, 171, 171);
     padding: 4px;
     text-align: left;
 }
 
-#parameter {
+.parameter {
     border:1px solid black;
     background-color: rgb(175, 171, 171); 
     
     
 }
 
-#numbers {
+.numbers {
     padding: 2px;
     border: 1px solid black;
     width: 400px;
     float: left;
     
+}
+
+.graph {
+    border:1px solid black;
+    width: 840px; 
+    float: right;  
 }
 
 #parmName {
@@ -51,12 +57,22 @@ body {
     font-family: 'Orbitron';
     font-size: large;
     font-weight: bold;
-
 }
 
-#graph {
-    border:1px solid black;
-    width: 840px; 
-    float: right;  
+#parmName1 {
+    font-size: x-large;
+    text-decoration: underline;
+}
+
+#parmValue1 {
+    font-family: 'Orbitron';
+    font-size: x-large;
+    font-weight: bolder;
+}
+
+#parmMean1 {
+    font-family: 'Orbitron';
+    font-size: large;
+    font-weight: bold;
 }
 
