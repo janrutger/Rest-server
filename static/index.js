@@ -6,11 +6,11 @@ function refresh(parm_id){
     console.log("Func refresh")
     console.log(parm_id)
     if (parm_id == 0){
-        url = "http://rest:5000/slice/json/today/36/5/Amsterdam/temperature"
+        url = "http://rest:5000/slice/json/now/36/5/Amsterdam/temperature"
     } else if (parm_id == 1){
-        url = "http://rest:5000/slice/json/today/36/5/Amsterdam/Humidity"
+        url = "http://rest:5000/slice/json/now/36/5/Amsterdam/Humidity"
     } else if (parm_id == 2){
-        url = "http://rest:5000/slice/json/today/36/5/Amsterdam/pressure"
+        url = "http://rest:5000/slice/json/now/36/5/Amsterdam/pressure"
     }
 
     fetch(url)
@@ -107,8 +107,6 @@ function plot(info, parm_id){
     }
 
     chart.draw(data, google.charts.Line.convertOptions(options));
-
-
 }
 
 function refreshButton(num){
@@ -117,6 +115,8 @@ function refreshButton(num){
 
 refresh(0); 
 refresh(1);
+refresh(2);
 
-refresh2 = setInterval(refresh(2), 30000);
-console.log("jr", refresh2)
+refreshTimer = setInterval(function() {refresh(2);
+                                refresh(1);
+                                refresh(0);}, 180000);
