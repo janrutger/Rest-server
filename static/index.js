@@ -71,15 +71,7 @@ function plot(info, parm_id){
     //JR Code
     
     parm = Object.keys(info["VALUE_LAST"])[0]
-    /*markerValue = info["VALUE_N_AVERAGE"][parm]
-    if (markerValue < value){
-        marker = "Higher"
-    } else if (markerValue > value){
-        marker = "Lower"
-    } else {
-        marker = "Same"
-    }*/
-
+    
     //merge 2x1D to 1x2D array
     var xas = info["TIME_LABELS"];
     var yas = info["VALUE_LIST"][parm];
@@ -102,8 +94,8 @@ function plot(info, parm_id){
           title: info["PARAMETER"].toUpperCase(),
           subtitle: parm + " " + info["UNITS"]
         },
-        width: 830,
-        height: 200
+        width: 840,
+        height: 210
     };
 
     if (parm_id == 0){
@@ -122,3 +114,9 @@ function plot(info, parm_id){
 function refreshButton(num){
     refresh(num)
 }
+
+refresh(0); 
+refresh(1);
+
+refresh2 = setInterval(refresh(2), 30000);
+console.log("jr", refresh2)
