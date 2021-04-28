@@ -119,4 +119,4 @@ refresh(2);
 
 refreshTimer = setInterval(function() {refresh(2);
                                 refresh(1);
-                                refresh(0);}, 180000);
+                                refresh(0);}, 900000);

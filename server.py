@@ -164,9 +164,9 @@ def query_slice(output, endtime, hours, marker, station_id, parameter):
             response.headers["Content-Type"] = "application/json"
             response.headers["Access-Control-Allow-Origin"] = "*"
             print(response.headers)
-            print(response.data)
+            #print(response.data)
             return(response)
-            #return(jsonify(result))
+            
 
 
         elif output == "plot":
