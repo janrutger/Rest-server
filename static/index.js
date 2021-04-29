@@ -81,18 +81,28 @@ function plot(info, parm_id){
         resultArr.push([new Date(xas[i]), yas[i]]);
     };
 
+    
+    /*console.log(new Intl.DateTimeFormat('nl', { dateStyle: 'full', timeStyle: 'long' }).format(info["LAST_TIME_FOR"])); */
+
     //Google Code
 
     var data = new google.visualization.DataTable();
-    data.addColumn('datetime', 'Sample time');
+    data.addColumn('datetime');
     data.addColumn('number', info["PARAMETER"]);
 
-      data.addRows(resultArr)
+    data.addRows(resultArr)
+
+    lastDate = new Date (info["LAST_TIME_FOR"])
+    var options = { weekday: 'long', hour: 'numeric', minute: 'numeric', hour12: false };
+    lastDate = new Intl.DateTimeFormat('en-NL', options).format(lastDate);
+  
 
     var options = {
         chart: {
-          title: info["PARAMETER"].toUpperCase(),
-          subtitle: parm + " " + info["UNITS"]
+            title: lastDate,
+            subtitle: parm + "[" + info["UNITS"] + "]",
+            hour12: false,
+            legend: { position: 'bottom' }
         },
         width: 840,
         height: 210
