@@ -68,6 +68,7 @@ def query_slice(output, endtime, hours, marker, station_id, parameter):
     start = end - timedelta(hours=int(hours))
     print("Start query")
     selection = Sensor_data.objects(station_id=station_id, parameter=parameter, time_for__gte=start, time_for__lte=end)
+    print(selection.explain())
 
     if not selection():
         result = {"ERROR" : {"OUTPUT"    : output,
