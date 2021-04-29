@@ -101,11 +101,13 @@ function plot(info, parm_id){
         chart: {
             title: lastDate,
             subtitle: parm + "[" + info["UNITS"] + "]",
-            hour12: false,
-            legend: { position: 'bottom' }
+            legend: 'none' 
         },
         width: 840,
-        height: 210
+        height: 210,
+        hAxis: {
+            format: 'HH'
+        }
     };
 
     if (parm_id == 0){
