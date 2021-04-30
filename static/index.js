@@ -98,16 +98,14 @@ function plot(info, parm_id){
   
 
     var options = {
-        chart: {
-            title: lastDate,
-            subtitle: parm + "[" + info["UNITS"] + "]",
-            legend: 'none' 
-        },
+        title: info["PARAMETER"] + " - " + parm + "[" + info["UNITS"] + "]",
+        subtitle: lastDate,
         width: 840,
         height: 210,
         hAxis: {
-            format: 'HH'
-        }
+            format: 'H'
+        },
+        legend: {position: 'none', textStyle: {color: 'red', fontSize: 16}}
     };
 
     if (parm_id == 0){
