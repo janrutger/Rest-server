@@ -345,7 +345,7 @@ def update_record():
 
 
 
-@app.route('/esp', methods=['POST'])
+@app.route('/data/', methods=['POST'])
 def update_record2():
     records = json.loads(request.data)
     print(json.dumps(records, indent=4, sort_keys=True))
@@ -361,7 +361,7 @@ def update_record2():
                              value =record[5],
                              units=record[6])
         
-        #sample.save()
+        sample.save()
     return jsonify({"data received" : "ok"})
 
 
