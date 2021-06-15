@@ -326,6 +326,7 @@ def query_selection(hours, station_id, parameter):
 @app.route('/', methods=['POST'])
 def update_record():
     records = json.loads(request.data)
+    print(json.dumps(records, indent=4, sort_keys=True))
     for record in records:
         print(record)
 
@@ -340,6 +341,29 @@ def update_record():
         
         sample.save()
     return jsonify({"data received" : "ok"})
+
+
+
+
+@app.route('/esp', methods=['POST'])
+def update_record2():
+    records = json.loads(request.data)
+    print(json.dumps(records, indent=4, sort_keys=True))
+    for record in records:
+        print(record)
+
+        sample = Sensor_data(sample_id =record[0],
+                             station_id=record[1],
+                             parameter =record[2],
+
+                             time_at =datetime.strptime(record[3], "%Y-%m-%dT%H:%M:%S"),
+                             time_for=datetime.strptime(record[4], "%Y-%m-%dT%H:%M:%S"),
+                             value =record[5],
+                             units=record[6])
+        
+        #sample.save()
+    return jsonify({"data received" : "ok"})
+
 
 
 
